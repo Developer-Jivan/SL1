@@ -1,0 +1,38 @@
+graph = {
+    'A': ['B', 'C'],
+    'B': ['A', 'D'],
+    'C': ['A', 'E'],
+    'D': ['B', 'E'],
+    'E': ['C', 'D']
+}
+
+def dfs(graph,node,visited):
+    print(node,end=' ')
+    visited.add(node)
+
+    for n in graph[node]:
+        if n not in visited:
+            dfs(graph,n,visited)
+
+
+def bfs(graph,queue,visited):
+
+    if not queue:
+        return
+    
+    node=queue.pop(0)
+    print(node,end=' ')
+
+    for n in graph[node]:
+        if n not in visited:
+            visited.add(n)
+            queue.append(n)
+    
+    bfs(graph,queue,visited)
+
+
+visited=set()
+dfs(graph,'A',visited)
+print()
+visited=set('A')
+bfs(graph,['A'],visited)
