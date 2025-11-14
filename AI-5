@@ -1,0 +1,55 @@
+def selection_sort(arr):
+    for i in range(len(arr)):
+        min=i
+        for j in range(i+1,len(arr)):
+            if arr[j]<arr[min]:
+                min=j
+        temp=arr[i]
+        arr[i]=arr[min]
+        arr[min]=temp
+    
+    print(arr)
+
+        
+selection_sort([5,4,3,2,1])
+
+#krushkal
+edges = [
+    (1, 'A', 'B'),
+    (3, 'A', 'C'),
+    (3, 'B', 'C'),
+    (6, 'B', 'D'),
+    (4, 'C', 'D')
+]
+
+parent={}
+
+# init parent of all nodes as them sleves
+for w,u,v in edges:
+    parent[u]=u
+    parent[v]=v
+
+
+# find parent 
+def findp(vertex):
+    if parent[vertex]==vertex:
+        return vertex
+    
+    return findp(parent[vertex])
+
+
+# do union
+def  union(v1,v2):
+    parent[findp(v1)]=findp(v2)
+
+edges.sort()
+
+mst=[]
+
+for w,u,v in edges:
+    if findp(u)!=findp(v):
+        mst.append((u,v,w))
+        union(u,v)
+
+
+print(mst)
