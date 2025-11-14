@@ -1,0 +1,93 @@
+# -------------------------------
+# Grid setup
+# -------------------------------
+grid = [
+    ['S', '.', '.', '#'],
+    ['.', '#', '.', '.'],
+    ['.', '.', '.', 'G']
+]
+
+rows = len(grid)
+cols = len(grid[0])
+
+# -------------------------------
+# Helper functions
+# -------------------------------
+def find_position(symbol):
+    for i in range(rows):
+        for j in range(cols):
+            if grid[i][j] == symbol:
+                return (i, j)
+    return None
+
+start = find_position('S')
+goal = find_position('G')
+
+def manhattan(a, b):
+    (x1, y1), (x2, y2) = a, b
+    return abs(x1 - x2) + abs(y1 - y2)
+
+def get_neighbors(pos):
+    x, y = pos
+    directions = [(1,0), (-1,0), (0,1), (0,-1)]
+    result = []
+    for dx, dy in directions:
+        nx = x + dx
+        ny = y + dy
+        if 0 <= nx < rows and 0 <= ny < cols and grid[nx][ny] != '#':
+            result.append((nx, ny))
+    return result
+
+# -------------------------------
+# Simple A* Implementation
+# -------------------------------
+def a_star(start, goal):
+    open_list = [(0, start)]  # (total_cost, position)
+    came_from = {start: None}
+    g_cost = {start: 0}
+
+    while open_list:
+        # Find node with smallest total cost (f)
+        open_list.sort()  # simpler than heapq
+        f, current = open_list.pop(0)
+
+        if current == goal:
+            # Reconstruct the path
+            path = []
+            while current is not None:
+                path.append(current)
+                current = came_from[current]
+            return path[::-1]
+
+        for next_pos in get_neighbors(current):
+            new_g = g_cost[current] + 1
+            if next_pos not in g_cost or new_g < g_cost[next_pos]:
+                g_cost[next_pos] = new_g
+                f = new_g + manhattan(next_pos, goal)
+                open_list.append((f, next_pos))
+                came_from[next_pos] = current
+
+    return None
+
+# -------------------------------
+# Run A*
+# -------------------------------
+path = a_star(start, goal)
+print("Path:", path)
+print()
+
+# -------------------------------
+# Display grid with path
+# -------------------------------
+print("Shortest Path on Grid:")
+for i in range(rows):
+    for j in range(cols):
+        if (i, j) == start:
+            print('S', end=' ')
+        elif (i, j) == goal:
+            print('G', end=' ')
+        elif path and (i, j) in path:
+            print('*', end=' ')
+        else:
+            print(grid[i][j], end=' ')
+    print()
